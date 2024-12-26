@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Md Arham Kalam Ansari Expense Tracker</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+
+        .form-control,
+        .btn {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .form-label {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .table-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .table {
+            margin: 0 auto;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+        }
+
+        .table thead {
+            background-color: #4CAF50;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background-color: #f93003;
+            border-color: #FF5733;
+            transition: background-color 0.3s;
+        }
+
+        .btn-danger:hover {
+            background-color: #e14e2d;
+        }
+
+        h4 {
+            text-align: center;
+            font-size: 24px;
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        /* Alert styling */
+        .alert {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .alert.alert-warning {
+            background-color: #FFEB3B;
+            color: #000;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .alert.alert-success {
+            background-color: #8BC34A;
+            color: white;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+                max-width: 100%;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .table th,
+            .table td {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .form-control {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .btn-primary {
+                padding: 10px;
+            }
+
+            h4 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            .table th,
+            .table td {
+                padding: 6px;
+                font-size: 12px;
+            }
+
+            .form-control {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .btn-primary {
+                padding: 8px;
+            }
+
+            h4 {
+                font-size: 18px;
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* Dark theme styles */
+        .dark-theme {
+            background-color: #333;
+            color: white;
+        }
+
+        .dark-theme h2 {
+            color: white;
+        }
+
+        .dark-theme .container {
+            background-color: #444;
+            color: white;
+        }
+
+        .dark-theme td {
+            color: white;
+            background-color: #333;
+        }
+
+        .dark-theme input {
+            background-color: #333;
+        }
+
+        .dark-theme ::placeholder {
+            color: white;
+        }
+
+        .dark-theme input[type="date"] {
+            color: white;
+        }
+
+        .dark-theme input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            /* This will invert the color of the calendar icon (optional) */
+        }
+        .dark-theme input:focus {
+            background-color: #444;
+            /* Darker background when focused */
+            border-color: #00bfff;
+            /* Border color when focused */
+            outline: none;
+            /* Remove default outline */
+        }
+        .dark-theme input[type="date"]:focus {
+            background-color: #444;
+            /* Darker background when focused */
+            border-color: #00bfff;
+            /* Border color when focused */
+            outline: none;
+            /* Remove default outline */
+        }
+
+        /* Button styling */
+        #themeToggleButton {
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            background-color: transparent;
+            border: 1px solid #4caf4fb0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            color: green;
+            cursor: pointer;
+            font-size: 22px;
+        }
+
+        #themeToggleButton:hover {
+            background-color: #4caf4fb0;
+            color: white;
+            transition: all 0.4s ease-in-out;
+        }
+
+        /* Fade effect for content */
+        .fade-out {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+
+        /* Troll message */
+        #trollMessage {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ff6347;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 18px;
+            text-align: center;
+            z-index: 10000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Transition effect */
+        @keyframes trollEffect {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+        }
+
+        #trollMessage.show {
+            display: block;
+            animation: trollEffect 0.5s ease-in-out forwards;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="loader" class="spinner-border text-primary"
+            style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 3rem; height: 3rem; border-width: 0.25rem; border-top-color: rgba(225, 95, 9, 0.8); border-right-color: rgba(9, 231, 46, 0.6); animation: spin 1s linear infinite; z-index: 9999;"
+            role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h2>Expenses Tracker</h2>
+        <button id="downloadPdf" class="btn btn-primary pdf-btn">Download <i
+                class="fa-regular fa-file-pdf"></i></button>
+
+
+
+        <!-- Alert Message -->
+        <div class="alert alert-warning" id="warningAlert">
+            Please enter valid values for the item, quantity, amount, and date of purchase.
+        </div>
+
+        <form id="expenseForm">
+            <div class="mb-3">
+                <label for="itemName" class="form-label">Item Name</label>
+                <input type="text" id="itemName" class="form-control" placeholder="Item Name" required>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-12 mb-3">
+                    <label for="itemQuantity" class="form-label">Quantity</label>
+                    <input type="number" id="itemQuantity" class="form-control" placeholder="Quantity" required>
+                </div>
+                <div class="col-md-6 col-12 mb-3">
+                    <label for="itemAmount" class="form-label">Amount (₹)</label>
+                    <input type="number" id="itemAmount" class="form-control" placeholder="Amount" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="purchaseDate" class="form-label">Date of Purchase</label>
+                <input type="date" id="purchaseDate" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary w-100">Add Item</button>
+            </div>
+        </form>
+
+        <!-- Table to display the added expenses -->
+        <div class="table-container table-responsive" style="overflow-x: auto; max-width: 100%;">
+            <table class="table mx-auto table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="background-color: #4CAF50;color: white;">Item Name</th>
+                        <th style="background-color: #4CAF50;color: white;">Quantity</th>
+                        <th style="background-color: #4CAF50;color: white;">Amount (₹)</th>
+                        <th style="background-color: #4CAF50;color: white;">Total (₹)</th>
+                        <th style="background-color: #4CAF50;color: white;">Date of Purchase</th>
+                        <th style="background-color: #4CAF50;color: white;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="expensesList"></tbody>
+            </table>
+            <h4>Total: ₹<span id="totalAmount">0.00</span></h4>
+        </div>
+
+        <!-- Table to display the payment history -->
+        <div class="table-container mt-4 table-responsive" style="overflow-x: auto; max-width: 100%;">
+            <h4>Payment History</h4>
+            <table class="table mx-auto table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="background-color: #4CAF50;color: white;">Amount Paid (₹)</th>
+                        <th style="background-color: #4CAF50;color: white;">Date of Payment</th>
+                        <th style="background-color: #4CAF50;color: white;">Remarks</th>
+                        <th style="background-color: #4CAF50;color: white;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentHistoryList"></tbody>
+            </table>
+            <h4>Total Paid: ₹<span id="totalPaidAmount">0.00</span></h4>
+
+            <!-- Add Payment Form -->
+            <div class="mb-3">
+                <label for="paymentAmount" class="form-label">Amount Paid (₹)</label>
+                <input type="number" id="paymentAmount" class="form-control" placeholder="Amount Paid" required>
+            </div>
+            <div class="mb-3">
+                <label for="paymentDate" class="form-label">Date of Payment</label>
+                <input type="date" id="paymentDate" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="paymentRemark" class="form-label">Remark</label>
+                <input type="text" id="paymentRemark" class="form-control" placeholder="Remarks" required>
+            </div>
+            <div class="mb-3">
+                <button type="button" class="btn btn-primary w-100" id="addPaymentButton">Add Payment</button>
+            </div>
+        </div>
+
+        <!-- Total Paid input and remaining balance -->
+        <div class="table-container mt-4">
+            <h4>Remaining: ₹<span id="remainingAmount">0.00</span></h4>
+        </div>
+
+        <div id="trollMessage">Switching....</div>
+
+
+        <footer class="text-center mt-4">
+            <small style="font-weight: 800;font-size: 17px;">Made by Md Arham Kalam Ansari</small>
+        </footer>
+
+
+    </div>
+
+    <button id="themeToggleButton">
+        <i class="fa-regular fa-sun"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.26/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Get elements
+        const expenseForm = document.getElementById('expenseForm');
+        const itemName = document.getElementById('itemName');
+        const itemQuantity = document.getElementById('itemQuantity');
+        const itemAmount = document.getElementById('itemAmount');
+        const purchaseDate = document.getElementById('purchaseDate');
+        const expensesList = document.getElementById('expensesList');
+        const totalAmount = document.getElementById('totalAmount');
+        const totalPaidAmount = document.getElementById('totalPaidAmount');
+        const paymentAmount = document.getElementById('paymentAmount');
+        const paymentDate = document.getElementById('paymentDate');
+        const paymentRemark = document.getElementById('paymentRemark');
+        const paymentHistoryList = document.getElementById('paymentHistoryList');
+        const remainingAmount = document.getElementById('remainingAmount');
+
+        // Initialize the expenses and payments from localStorage
+        let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        let payments = JSON.parse(localStorage.getItem('payments')) || [];
+        let totalPaid = parseFloat(localStorage.getItem('totalPaid')) || 0;
+
+        // Function to render expenses table
+        function renderExpenses() {
+            expensesList.innerHTML = '';
+            let total = 0;
+
+            expenses.forEach((expense, index) => {
+                const row = document.createElement('tr');
+                const totalItemCost = expense.quantity * expense.amount;
+                total += totalItemCost;
+
+                row.innerHTML = `
+            <td>${expense.itemName}</td>
+            <td>${expense.quantity}</td>
+            <td>₹${expense.amount.toFixed(2)}</td>
+            <td>₹${totalItemCost.toFixed(2)}</td>
+            <td>${expense.purchaseDate}</td>
+            <td>
+                <button class="btn btn-primary" onclick="editExpense(${index})"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger" onclick="removeExpense(${index})"><i class="fas fa-trash-alt"></i></button>
+            </td>
+        `;
+                expensesList.appendChild(row);
+            });
+
+            totalAmount.textContent = total.toFixed(2);
+            updateRemainingAmount();
+        }
+
+        // Function to render payment history table
+        function renderPayments() {
+            paymentHistoryList.innerHTML = '';
+            let totalPayments = 0;
+
+            payments.forEach((payment, index) => {
+                const row = document.createElement('tr');
+                totalPayments += payment.amount;
+
+                row.innerHTML = `
+            <td>₹${payment.amount.toFixed(2)}</td>
+            <td>${payment.date}</td>
+            <td>${payment.remark}</td>
+            <td>
+                <button class="btn btn-danger" onclick="removePayment(${index})"><i class="fas fa-trash-alt"></i></button>
+            </td>
+        `;
+                paymentHistoryList.appendChild(row);
+            });
+
+            totalPaidAmount.textContent = totalPayments.toFixed(2);
+            updateRemainingAmount();
+        }
+
+        // Function to add a payment
+        function addPayment() {
+            const amount = parseFloat(paymentAmount.value);
+            const date = paymentDate.value;
+            const remark = paymentRemark.value;
+            if (amount > 0 && date) {
+                const payment = { amount, date, remark };
+                payments.push(payment);
+                localStorage.setItem('payments', JSON.stringify(payments));
+                localStorage.setItem('totalPaid', totalPaid + amount);
+                paymentAmount.value = '';
+                paymentDate.value = '';
+                paymentRemark.value = '';
+                renderPayments();
+                updateRemainingAmount();
+            }
+        }
+
+        // Function to remove an expense
+        function removeExpense(index) {
+            expenses.splice(index, 1);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+            renderExpenses();
+        }
+
+        // Function to remove a payment
+        function removePayment(index) {
+            payments.splice(index, 1);
+            localStorage.setItem('payments', JSON.stringify(payments));
+            renderPayments();
+            updateRemainingAmount();
+        }
+
+        // Function to edit an expense
+        function editExpense(index) {
+            window.scrollTo(0, 0);
+            const expense = expenses[index];
+            itemName.value = expense.itemName;
+            itemQuantity.value = expense.quantity;
+            itemAmount.value = expense.amount;
+            purchaseDate.value = expense.purchaseDate;
+
+            // Change button to 'Update Item'
+            const updateButton = expenseForm.querySelector('button');
+            updateButton.textContent = "Update Item";
+            updateButton.onclick = function () {
+                // Update expense
+                expense.itemName = itemName.value;
+                expense.quantity = parseInt(itemQuantity.value);
+                expense.amount = parseFloat(itemAmount.value);
+                expense.purchaseDate = purchaseDate.value;
+
+                localStorage.setItem('expenses', JSON.stringify(expenses));
+                renderExpenses();
+                // Reset form
+                itemName.value = '';
+                itemQuantity.value = '';
+                itemAmount.value = '';
+                purchaseDate.value = '';
+                updateButton.textContent = "Add Item";
+                updateButton.onclick = addExpense;
+            };
+        }
+
+        // Function to add an expense
+        function addExpense(event) {
+            event.preventDefault();
+            const name = itemName.value;
+            const quantity = parseInt(itemQuantity.value);
+            const amount = parseFloat(itemAmount.value);
+            const date = purchaseDate.value;
+
+            if (name && quantity > 0 && amount > 0 && date) {
+
+                document.getElementById("loader").style.display = "block";
+
+                // Simulate a delay for demonstration (e.g., saving to localStorage)
+                setTimeout(() => {
+                    expenses.push({ itemName: name, quantity, amount, purchaseDate: date });
+                    localStorage.setItem('expenses', JSON.stringify(expenses));
+                    itemName.value = '';
+                    itemQuantity.value = '';
+                    itemAmount.value = '';
+                    purchaseDate.value = '';
+                    renderExpenses();
+
+                    // Hide the loader once the process is done
+                    document.getElementById("loader").style.display = "none";
+                }, 1200);
+            }
+        }
+
+        // Function to update remaining amount
+        function updateRemainingAmount() {
+            const totalExpenses = parseFloat(totalAmount.textContent);
+            const totalPayments = parseFloat(totalPaidAmount.textContent);
+            const remaining = totalExpenses - totalPayments;
+            remainingAmount.textContent = remaining.toFixed(2);
+        }
+
+        // Event listeners
+        expenseForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            addExpense(e);
+        });
+
+        document.getElementById('addPaymentButton').addEventListener('click', addPayment);
+
+        // Initial rendering of data
+        renderExpenses();
+        renderPayments();
+
+        //function for PDF
+        document.getElementById("downloadPdf").addEventListener("click", function () {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Set the font size and add a title
+            doc.setFontSize(16);
+            doc.text("Your Expenses Tracker Record", 14, 10);
+
+            // Get table headers and rows
+            const table = document.querySelector(".table");
+            const headers = [];
+            const rows = [];
+
+            // Extract headers from the table (excluding 'Total' and 'Action' columns)
+            const headerCells = table.querySelectorAll("thead tr th");
+            headerCells.forEach((cell, index) => {
+                let headerText = cell.innerText;
+
+                // Remove the ₹ symbol from header text (e.g., for "Amount" or "Total Amount")
+                if (headerText.includes("₹")) {
+                    headerText = headerText.replace('₹', 'Ruppes').trim(); // Remove ₹ symbol
+                }
+
+                if (index !== 5) { // Exclude Total and Action columns (index 3 and 5)
+                    headers.push(headerText);
+                }
+            });
+
+            // Extract rows from the table (excluding 'Total' and 'Action' columns)
+            const bodyRows = table.querySelectorAll("tbody tr");
+            bodyRows.forEach(row => {
+                const rowData = [];
+                const cells = row.querySelectorAll("td");
+                cells.forEach((cell, index) => {
+                    if (index !== 5) { // Exclude Total and Action columns (index 3 and 5)
+                        let cellText = cell.innerText;
+
+                        // Remove the ₹ symbol from the amount column (index 2 and 3)
+                        if (index === 2 || index === 3) {
+                            cellText = cellText.replace('₹', '').trim(); // Remove ₹ symbol
+                        }
+
+                        rowData.push(cellText);
+                    }
+                });
+                rows.push(rowData);
+            });
+
+            // Add the table to the PDF
+            doc.autoTable({
+                head: [headers],
+                body: rows,
+                startY: 20, // Position of the table
+                margin: { horizontal: 14, top: 30 }, // Add top margin to avoid overlap with the title
+                styles: {
+                    fontSize: 12, // Font size for regular table data
+                    cellPadding: 5, // Cell padding for better readability
+                    halign: 'center', // Horizontal alignment of text
+                    valign: 'middle', // Vertical alignment of text
+                    overflow: 'linebreak', // Handle overflow in cells
+                    cellWidth: 'auto', // Auto-adjust column width
+                },
+                headStyles: {
+                    fillColor: [76, 175, 80], // Green color for the header
+                    textColor: [255, 255, 255], // White text color for headers
+                    fontSize: 14, // Larger font size for headers
+                    fontStyle: 'bold', // Bold font for headers
+                },
+                bodyStyles: {
+                    fontSize: 12, // Regular font size for body
+                    halign: 'center', // Center align the text in body
+                    valign: 'middle', // Vertical align text to the middle
+                },
+                theme: 'grid', // Add grid theme to make the table look better
+                columnStyles: {
+                    0: { cellWidth: 'auto' }, // Item Name column
+                    1: { cellWidth: 'auto' }, // Quantity column
+                    2: { cellWidth: 'auto' }, // Amount column
+                },
+            });
+
+            // Position the total amount and total paid at the bottom of the table
+            let yPosition = doc.lastAutoTable.finalY + 10; // Position after table ends
+            const totalAmount = document.getElementById("totalAmount").textContent;
+            const totalPaidAmount = document.getElementById("totalPaidAmount").textContent;
+            const remainingAmount = document.getElementById("remainingAmount").textContent;
+
+            // Add Total, Paid, and Remaining Amounts below the table
+            doc.setFontSize(12);
+            doc.text(`Total Amount (in Ruppes): ${totalAmount}`, 14, yPosition);
+            yPosition += 10;
+            doc.text(`Total Paid (in Ruppes): ${totalPaidAmount}`, 14, yPosition);
+            yPosition += 10;
+            doc.text(`Remaining Amount (in Ruppes): ${remainingAmount}`, 14, yPosition);
+            yPosition += 10;  // Extra space before 'Made by' text
+            doc.text("Made by Md Arham Kalam Ansari", 14, yPosition);
+
+            // Save the PDF
+            doc.save("expenses.pdf");
+        });
+
+        const themeToggleButton = document.getElementById('themeToggleButton');
+        const trollMessage = document.getElementById('trollMessage');
+        const body = document.body;
+        const container = document.querySelector('.container');
+
+        themeToggleButton.addEventListener('click', function () {
+            // Show the troll message and animate it
+            trollMessage.classList.add('show');
+
+            // Fade out the entire content
+            container.classList.add('fade-out');
+
+            // After the fade-out, hide the content and apply dark mode
+            setTimeout(function () {
+                // Hide all content temporarily
+                container.style.opacity = 0;
+                body.classList.toggle('dark-theme');
+                const currentTheme = body.classList.contains('dark-theme') ? 'Dark' : 'Light';
+                themeToggleButton.innerHTML = `<i class="${currentTheme === 'Dark' ? 'fa-solid fa-moon' : 'fa-regular fa-sun'}"></i>`;
+                // After 1 second (when fade-out is complete), bring the content back
+                localStorage.setItem('theme', currentTheme);
+                setTimeout(function () {
+                    container.style.opacity = 1;
+                    container.classList.remove('fade-out');
+                    trollMessage.classList.remove('show');
+                }, 400); // Wait for the fade effect to finish
+            }, 1100); // Wait for 2 seconds before switching theme
+        });
+
+        // On page load, check if a theme is stored in localStorage and apply it
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedTheme = localStorage.getItem('theme');
+
+            // If a saved theme exists, apply it
+            if (savedTheme === 'Dark') {
+                body.classList.add('dark-theme');
+                themeToggleButton.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            } else {
+                body.classList.remove('dark-theme');
+                themeToggleButton.innerHTML = '<i class="fa-regular fa-sun"></i>';
+            }
+        });
+
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
